@@ -7,18 +7,212 @@ output: github_document
 
 #Outline
 
-1. Character data
-2. Writing functions
-3. Work with candy data
-4. Work with the `singer` data
-5. Work with a list
-6. Work with a nested data frame
+  **1. Load packages**
+  
+  **2. Character data**
+  
+  **3. Writing functions**
+
+##1. Load packages
+
+First we will load the packages we will be using for the exercises
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(stringr))
+suppressPackageStartupMessages(library(stringi))
+suppressPackageStartupMessages(library(testthat))
+suppressPackageStartupMessages(library(knitr))
+```
+
+##2. Character data
+
+For this section, we will be workign through the Strings exercises found [here](https://r4ds.had.co.nz/strings.html)
+
+1. In code that doesn’t use stringr, you’ll often see paste() and paste0(). (a) What’s the difference between the two functions? (b) What stringr function are they equivalent to? (c) How do the functions differ in their handling of NA?
+
+(a) Both paste() and paste0() and are used to concatenate a series of strings, but paste() sepearates strings with " ", whereas paste0() separates strings with "". In order to remove " " (space) between strings when using paste(), you must also include the sep element as sep = ""
+#Is there a better way to write this?
+
+```{r}
+paste("c", "at")
+```
+```{r}
+paste("c", "at", sep = "")
+```
+
+```{r}
+paste0("c", "at")
+```
+
+(b) The stringer function that is equivalent to paste0() is str_c(), and the stringer function that is equivalent to paste() would be str_c() with argument sep = " " included.
+#Wording weird?
+
+```{r}
+str_c("c", "at")
+```
+```{r}
+str_c("c", "at", sep = " ")
+```
+
+(c) Now we will include NA as a string to see how this affects the functions we just went over. 
+
+```{r}
+paste("c", "at", NA)
+```
+```{r}
+paste0("c", "at", NA)
+```
+```{r}
+str_c("c", "at", NA)
+```
+```{r}
+str_c(NA, "c", "at")
+```
+
+2. In your own words, describe the difference between the sep and collapse arguments to str_c()?
+
+Within the str_c function, you can include both the sep and collapse arguments.
+  - sep seperates terms and should be specified with character strign format
+  - collapse separates results and should be specified with character strign format
+  
+We will walk through the explained differences with an example.
+
+First we will start with a simple paste() function:
+
+```{r}
+str_c("this", "is", "file", "name")
+```
+
+Next we will separate the strings with a "_"
+
+```{r}
+str_c("this", "is", "file", "name", sep = "_")
+```
+
+Now to better explain collapse, we will make a vector and add this to our str_c():
+
+```{r}
+#first make a vector 
+x <- c("1", "2", "3")
+str_c("this", "is", "file", "name", x, sep = "_")
+```
+
+Look what happens when we add the collapse argument:
+
+```{r}
+x <- c("1", "2", "3")
+str_c("this", "is", "file", "name", x, sep = "_", collapse = ", ")
+```
+
+3. Use str_length() and str_sub() to extract the middle character from a string. 
+
+```{r}
+str_length("elephants")
+```
+
+```{r}
+str_sub("elephants", 5, 5)
+```
+
+What will you do if the string has an even number of characters?
+
+```{r}
+str_length("frog")
+```
+```{r}
+str_sub("frog", 2, 3)
+```
+
+##Matching patterns with regular expressions 
 
 
 
+
+#Write a function
+
+For the second part of my homework 6, I will be writing a function. As I am hoping to create a package that I can use with my thesis work looking at the relationship of stream discharge and smolt production, I will try to create a relevant function. An idea I have is to write function.
+
+As most of the data I am using is coming the United States of America, the dishcarge unit is cubic feet per second, as opposed to cubic metres per second. Therefore, I am going to try and write a function to do the conversion for me. 
+
+  **ft^3^/s -> m^3^/s**
+
+The complete formula goes as such:
+
+  **(957.5065 fl. oz./1 ft^3^ ) X (1 L/33.814 fl. oz.) X (1 m^3^ /1000L)**
+
+Though a direct conversion is 1 ft^3^  X  0.02831685 m^3^/1 ft 
+
+We will use this simplified conversion in the function we create.
+
+```{r}
+#The input of 'ft2m' is temperature in Fahrenheit
+ft2m <- function(ft) {
+#F to C formula
+  m <- ft*(0.02831685)
+
+  #FtoC will return the temperature in Celsius
+  return(m)
+}
+```
+
+There! We have now saved the function `ft2m` to convert any ft^3^/s data to m^3^/s. Let's give this baby a test drive.
+
+```{r}
+#Test the function by converting 78 cubic feet per second to cubic metres per second
+ft2m(78)
+```
+
+Would you look at that! 78 ft^3^/s does indeed equate to 2.208714 m^3^/s. It looks like my *very first function* is working. But before I get too excited, I should probably use testthat to make sure!
+
+```{r}
+test_that("Simple cases work", {
+  expect_equal(ft2m(1), 0.02831685)
+  expect_lt(ft2m(78), 3)
+})
+```
+
+```{r error=TRUE}
+ft2m("three")
+```
+
+```{r}
+ft2m <- function (ft) {
+  if (!is.numeric(ft)) {
+    stop(paste("ft must be numeric, your input was character",
+               typeof(ft)))
+  }
+  m <- ft*(0.02831685)
+}
+```
+
+```{r error=TRUE}
+ft2m("three")
+```
+
+```{r}
+discharge <- c(66.27845435, 53.69990518, 80.78557149, 64.10702956, 98.43554032, 72.51415782, 71.19987428, 89.39984214, 50.10705428)
+discharge
+```
+
+```{r}
+discharge_converted <- ft2m(discharge)
+discharge_converted
+```
+
+Look at that! I converted a vector of dicharge values in feet^3^/second to metres^3^/second.
+
+Though as I will be importing my data as a dataframe, I wanted to practice adding a new collumn for the converted dicharge values.
+
+```{r}
+ef_trask = read.csv("ef_trask.csv", header = TRUE)
+ef_trask
+```
 
 
 ```{r}
-
+ef_trask$dishcharge_converted <- ft2m(ef_trask$discharge)
+ef_trask %>% 
+  kable(col.names = c("Year", "Coho spawners", "Coho smolts", "Chinook spawners", "Chinook smolts", "Cubic feet per second", "Cubic metres per second"))
 ```
 
