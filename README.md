@@ -11,4 +11,4 @@ Here is a content list, ordered based on importance:
 5. This [README](https://github.com/STAT545-UBC-students/hw06-tsmith93/blob/master/README.md)
 
 Enjoy!
-: :) :
+::):
