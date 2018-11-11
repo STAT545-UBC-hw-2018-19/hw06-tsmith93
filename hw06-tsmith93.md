@@ -3,14 +3,18 @@ hw06-tsmith93
 Thomas Smith
 2018-11-05
 
+------------------------------------------------------------------------
+
 Outline
 =======
 
-**1. Load packages**
+1.  Load packages
 
-**2. Character data**
+2.  Character data
 
-**3. Writing functions**
+3.  Writing functions
+
+------------------------------------------------------------------------
 
 1. Load packages
 ----------------
@@ -30,11 +34,15 @@ suppressPackageStartupMessages(library(knitr))
 
 For this section, we will be workign through the Strings exercises found [here](https://r4ds.had.co.nz/strings.html)
 
-1.  In code that doesn’t use stringr, you’ll often see paste() and paste0(). (a) What’s the difference between the two functions? (b) What stringr function are they equivalent to? (c) How do the functions differ in their handling of NA?
+### String basics
 
-<!-- -->
+1.  In code that doesn’t use stringr, you’ll often see paste() and paste0(). **(a)** What’s the difference between the two functions? **(b)** What stringr function are they equivalent to? **(c)** How do the functions differ in their handling of NA?
 
-1.  Both paste() and paste0() and are used to concatenate a series of strings, but paste() sepearates strings with " ", whereas paste0() separates strings with "". In order to remove " " (space) between strings when using paste(), you must also include the sep element as sep = "" \#Is there a better way to write this?
+**(a)** Both paste() and paste0() and are used to concatenate a series of strings, but paste() sepearates strings with " ", whereas paste0() separates strings with "". In order to remove " " (space) between strings when using paste(), you must also include the sep element as sep = ""
+
+Let's walk through this with an example.
+
+Here we use paste() to combine "c" and "at":
 
 ``` r
 paste("c", "at")
@@ -42,11 +50,18 @@ paste("c", "at")
 
     ## [1] "c at"
 
+That is not quite what we want. Though we can use the sep argument to remove the space:
+
 ``` r
+#using "" in the sep argument removes a space when combining the two strings
 paste("c", "at", sep = "")
 ```
 
     ## [1] "cat"
+
+Ta da! Perfect!
+
+Lets try with paste0() now!
 
 ``` r
 paste0("c", "at")
@@ -54,7 +69,11 @@ paste0("c", "at")
 
     ## [1] "cat"
 
-1.  The stringer function that is equivalent to paste0() is str\_c(), and the stringer function that is equivalent to paste() would be str\_c() with argument sep = " " included. \#Wording weird?
+Look at that! Using the past0 function, there automatically is no space between the combiend strings. Saves us some time as we do not have to use the sep argument.
+
+**(b)** The stringer function that is equivalent to paste0() is str\_c(), and the stringer function that is equivalent to paste() would be str\_c() with argument sep = " " included.
+
+Here will will go through the answer with examples. Let's try using str\_c with the strings "c" and "at"
 
 ``` r
 str_c("c", "at")
@@ -62,13 +81,20 @@ str_c("c", "at")
 
     ## [1] "cat"
 
+No space! Just like paste0. Let's try adding a space with the sep argument:
+
 ``` r
+#using " " in the sep argument
 str_c("c", "at", sep = " ")
 ```
 
     ## [1] "c at"
 
-1.  Now we will include NA as a string to see how this affects the functions we just went over.
+Yay! It worked!
+
+**(c)** Now we will include missing data as a string to see how this affects the functions we just went over.
+
+First with paste:
 
 ``` r
 paste("c", "at", NA)
@@ -76,11 +102,19 @@ paste("c", "at", NA)
 
     ## [1] "c at NA"
 
+Look at that, it's included as NA
+
+Next with paste0:
+
 ``` r
 paste0("c", "at", NA)
 ```
 
     ## [1] "catNA"
+
+Same as last, as expected.
+
+Now let's try including missing data using str\_c():
 
 ``` r
 str_c("c", "at", NA)
@@ -88,13 +122,17 @@ str_c("c", "at", NA)
 
     ## [1] NA
 
+This resulted in the combined string to read as NA! Maybe this is because NA was last? Let's try it first:
+
 ``` r
 str_c(NA, "c", "at")
 ```
 
     ## [1] NA
 
-1.  In your own words, describe the difference between the sep and collapse arguments to str\_c()?
+Nope! It still combined as NA!
+
+##### 2. In your own words, describe the difference between the sep and collapse arguments to str\_c()?
 
 Within the str\_c function, you can include both the sep and collapse arguments. - sep seperates terms and should be specified with character strign format - collapse separates results and should be specified with character strign format
 
@@ -166,8 +204,8 @@ str_sub("frog", 2, 3)
 Matching patterns with regular expressions
 ------------------------------------------
 
-Write a function
-================
+2. Write a function
+-------------------
 
 For the second part of my homework 6, I will be writing a function. As I am hoping to create a package that I can use with my thesis work looking at the relationship of stream discharge and smolt production, I will try to create a relevant function. An idea I have is to write function.
 
