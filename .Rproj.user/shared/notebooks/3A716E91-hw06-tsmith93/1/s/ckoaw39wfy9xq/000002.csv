@@ -1,0 +1,11 @@
+"0","test_that(""Simple cases work"", {
+  expect_equal(ft2m(1), 907.185)
+  expect_gt(ft2m(5), 4000)
+})
+"
+"2","Error: Test failed: 'Simple cases work'
+* ft2m(1) not equal to 907.185.
+1/1 mismatches
+[1] 0.0283 - 907 == -907
+* ft2m(5) is not strictly more than 4000. Difference: -4e+03
+"

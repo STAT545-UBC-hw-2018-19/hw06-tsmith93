@@ -1,0 +1,7 @@
+"0","#The input of 'ft2m' is temperature in Fahrenheit"
+"0","ft2m <- function(ft) {"
+"0","#F to C formula"
+"0","  m <- ft*(0.02831685)"
+"0","  #FtoC will return the temperature in Celsius"
+"0","  return(m)"
+"0","}"

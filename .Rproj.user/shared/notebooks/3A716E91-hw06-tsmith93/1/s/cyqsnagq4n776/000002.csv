@@ -1,0 +1,5 @@
+"0","#F to C formula
+  kg <- t*(907.185)
+"
+"2","Error in t * (907.185) : non-numeric argument to binary operator
+"

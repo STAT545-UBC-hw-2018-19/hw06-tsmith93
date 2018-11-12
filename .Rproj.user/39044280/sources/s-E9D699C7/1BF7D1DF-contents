@@ -1,0 +1,243 @@
+---
+title: "coho_chin_ef_trask"
+author: "Thomas Smith"
+date: '2018-11-09'
+output: github_document
+---
+
+In this R Markdown file, I will be conducting the analyses for chinook and coho salmon in the East Fork of the Trask River, in Oregon. In order to do the analyses, I will plot the spawner and smotl abundances as a stock recruitment relationship. I will then fit this relationship with a linear regression (density independant), the Ricker curve, as well as the Beverton-Holt curve. Though based on the fact that female salmon can superimpose their Redds on one anothers, not only is a carrying capacity for the spawning ground reached, but also higher rates of superimposition could possibly lead to a decline in recruits. ANOVA will be conducted. I will then take the residuals from the predicted curves and plot them against the 14 day low flow mean (discharge). ANOVA will conducted again. In total, there will 12 figures and 12 analyses to do. I will be trying to make this process as highly automated as possible. 
+
+
+```{r}
+LakeTroutGIS
+```
+
+```{r}
+library(FSA)
+library(FSAdata)
+library(nlstools)
+library(plotrix) 
+library(tidyverse)
+library(ggplot2)
+suppressPackageStartupMessages(library(knitr))
+```
+
+We will have a quick look at ef_trask dataset
+
+```{r}
+str(ef_trask)
+```
+
+Now we will fit coho spawner-smolt data with the different models
+
+#Coho - Linear regression
+
+```{r}
+ef_trask$logRcoho <- log(ef_trask$coho_smol)
+str(ef_trask)
+```
+
+```{r}
+co_bh <- srFuns(type="BevertonHolt",param=2)
+co_bh_s <- srStarts(coho_smol~coho_spaw,data=ef_trask,type="BevertonHolt",param=2) 
+unlist(co_bh_s)
+```
+
+```{r}
+co_ln <- logRcoho~log(a*coho_spaw)
+co_ln_s <- co_bh_s[1]
+co_ln_fit <- nls(co_ln,data=ef_trask,start=co_ln_s,algorithm="port",lower=c(0))
+```
+
+###Overview
+
+```{r}
+summary(co_ln_fit)
+```
+
+###Coho - Linear regression residuals
+
+```{r}
+ef_trask$coho_resid_ln <- resid(co_ln_fit)
+ef_trask$total_chin_spaw <- c(119,331,12,27,58,69,120,88,123)
+```
+
+```{r}
+ggplot(ef_trask, aes(x=discharge, y=coho_resid_ln)) +
+  geom_point() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
+  axis.line = element_line(colour = "black"))
+```
+
+#Coho - Ricker Curve
+
+```{r}
+co_ri <- srFuns(type="Ricker",param=3)
+co_ri_s <- srStarts(coho_smol~coho_spaw,data=ef_trask,type="Ricker",param=3)
+unlist(co_ri_s)
+co_ri_fit <- nls(logRcoho~log(co_ri(coho_spaw,a,Rp)),data=ef_trask,start=co_ri_s,algorithm="port",lower=c(0,0))
+print(co_ri_fit)
+```
+
+```{r}
+co_ln <- logRcoho~log(a*coho_spaw)
+co_ln_s <- co_ri_s[1]
+co_ln_fit <- nls(co_ln,data=ef_trask,start=co_ln_s,algorithm="port",lower=c(0))
+```
+
+```{r}
+summary(co_ri_fit)
+```
+
+###Coho - Ricker residuals
+
+```{r}
+ef_trask$coho_resid_ri <- resid(co_ri_fit)
+```
+
+```{r}
+ggplot(ef_trask, aes(x=discharge, y=coho_resid_ri)) +
+  geom_point() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
+  axis.line = element_line(colour = "black"))
+```
+
+#Coho - Beverton-Holt
+
+```{r}
+co_bh <- srFuns(type="BevertonHolt",param=2)
+co_bh_s <- srStarts(coho_smol~coho_spaw,data=ef_trask,type="BevertonHolt",param=2) 
+unlist(co_bh_s)
+co_bh_fit <- nls(logRcoho~log(co_bh(coho_spaw,a,Rp)),data=ef_trask,start=co_bh_s,algorithm="port",lower=c(0,0))
+```
+
+
+Overview
+
+```{r}
+summary(co_bh_fit)
+```
+
+
+###Coho - Beverton-Holt residuals
+
+```{r}
+ef_trask$coho_resid_bh <- resid(co_bh_fit)
+```
+
+```{r}
+ggplot(ef_trask, aes(x=discharge, y=coho_resid_bh)) +
+  geom_point() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
+  axis.line = element_line(colour = "black"))
+```
+
+#Chinook - Linear regression
+
+```{r}
+ef_trask$logRchin <- log(ef_trask$chin_smol)
+str(ef_trask)
+```
+
+```{r}
+ch_bh <- srFuns(type="BevertonHolt",param=2)
+ch_bh_s <- srStarts(chin_smol~chin_spaw,data=ef_trask,type="BevertonHolt",param=2) 
+unlist(ch_bh_s)
+```
+
+```{r}
+ch_ln <- logRchin~log(a*chin_spaw)
+ch_ln_s <- ch_bh_s[1]
+ch_ln_fit <- nls(ch_ln,data=ef_trask,start=ch_ln_s,algorithm="port",lower=c(0))
+```
+
+###Overview
+
+```{r}
+summary(ch_ln_fit)
+```
+
+###Steelhead - Linear regression residuals
+
+```{r}
+ef_trask$chin_resid_ln <- resid(ch_ln_fit)
+```
+
+```{r}
+ggplot(ef_trask, aes(x=discharge, y=chin_resid_ln)) +
+  geom_point() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
+  axis.line = element_line(colour = "black"))
+```
+
+#Chinook - Ricker Curve
+
+```{r}
+ch_ri <- srFuns(type="Ricker",param=3)
+ch_ri_s <- srStarts(chin_smol~total_chin_spaw,data=ef_trask,type="Ricker",param=3) 
+unlist(ch_ri_s)
+ch_ri_fit <- nls(logRchin~log(ch_ri(total_chin_spaw,a,Rp)),data=ef_trask,start=ch_ri_s,algorithm="port",lower=c(0,0))
+```
+
+```{r}
+ch_ln <- logRchin~log(a*chin_spaw)
+ch_ln_s <- ch_ri_s[1]
+ch_ln_fit <- nls(ch_ln,data=ef_trask,start=ch_ln_s,algorithm="port",lower=c(0))
+```
+
+```{r}
+summary(ch_ri_fit)
+```
+
+###Steelhead - Ricker residuals
+
+```{r}
+ef_trask$chin_resid_ri <- resid(ch_ri_fit)
+```
+
+```{r}
+ggplot(ef_trask, aes(x=discharge, y=chin_resid_ri)) +
+  geom_point() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
+  axis.line = element_line(colour = "black"))
+```
+
+#Steelhead - Beverton-Holt
+
+```{r}
+ch_bh <- srFuns(type="BevertonHolt",param=2)
+ch_bh_s <- srStarts(chin_smol~chin_spaw,data=ef_trask,type="BevertonHolt",param=2) 
+ch_bh_fit <- nls(logRchin~log(ch_bh(chin_spaw,a,Rp)),data=ef_trask,start=ch_bh_s,algorithm="port",lower=c(0,0)
+```
+
+Overview
+
+```{r}
+overview(ch_bh_fit)
+```
+
+
+###Steelhead - Beverton-Holt residuals
+
+```{r}
+ef_trask$chin_resid_bh <- resid(ch_bh_fit)
+```
+
+```{r}
+ggplot(ef_trask, aes(x=discharge, y=chin_resid_bh)) +
+  geom_point() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
+  axis.line = element_line(colour = "black"))
+```
+
+
+```{r}
+ef_trask$logRcohosmol <- log(ef_trask$coho_smol)
+ef_trask$logRcohospaw <- log(ef_trask$coho_spaw)
+```
+
+```{r}
+ggplot(ef_trask, aes(x=logRcohospaw, y=logRcohosmol)) +
+  geom_point() 
+```
+

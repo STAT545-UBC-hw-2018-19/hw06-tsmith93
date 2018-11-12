@@ -1,0 +1,4 @@
+"0","test_that(""Simple cases work"", {"
+"0","  expect_equal(ft2m(1), 0.02831685)"
+"0","  expect_lt(ft2m(78), 3)"
+"0","})"

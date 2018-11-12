@@ -1,0 +1,28 @@
+---
+title: "early_november_analysis"
+author: "Thomas Smith"
+date: '2018-11-06'
+output: html_document
+---
+
+In this R Markdown document, you will find the ealry steps of my database meta-analysis for the first chapter of my thesis where I will be trying to identify an empirical relationship between smolt production and stream discharge in the Pacific Northwest. This creation of thsi database was contracted to Dr. Rachel Chudnow, a post-doctoral researcher at the Institute for Oceans and Fisheries at the University of British Columbia, by Dr. Jordan Rosenfeld in 2016. The database is quite robust, though the desired annual discharge values are not contained, therefore this data will need to be retrieved from federal websites. 
+
+As the database is quite large with varying levels of completion for each dataset, I will first focus on one stream containing all the desired components (adequate timeframe, spawner abundances, smolt abundances, and discharge data to complete intended analyses).
+
+The first tep of the analysis will be to actually get the data into a workable format. The process of doing this will differ between the fish (spawner-smolt data) and the discharge data. For spawner smolt data, I will go into documents (primary and grey), and have to manual enter the desired data into Excel. Once this has been complete, I will then convert the worksheet into a csv file and bring it into the R environemtn. For discharge data, I will have to use either the Canadian or United States federal website in order to access the desired data. For both sites, the data output differes, therefore it will be a different tactic to obtain the data. For the United States website, data will be opened in the web browser and then copy/pasted into Excel. As the obtained data contains characters, R will be used to convert the data to a workable format (i.e. numerical or integer). For the Canadian discharge data, the historical hyrdrometric database is searched for the desired station and daily discharge (m^3/s) values are obtained. Once discharge data is in Excel, it will then be converted into .csv format and imported into the R environment.
+
+For my intitial analyses, I took data from the **East Fork of the Trask River**, in Oregon. The table below describes the time range for available data
+
+Species | Spawner data | Smolt Data | Discharge Data
+-------|--------------|------------|--------------
+Coho | 2004-2013 | 2005-2014 | 1996-2016
+Chinook | 2005-2014 | 2005-2014 | 1996-2016
+Steelhead | 2005-2014 | 2005-2014 | 1996-2016
+Cutthroat | 2005-2014 | 2005-2014 | 1996-2016
+
+As shown via the table, the timeframes for each variable does not match up, therefore we will only be able to complete analyses during the timeframe where all variables are represented. 
+
+
+
+
+

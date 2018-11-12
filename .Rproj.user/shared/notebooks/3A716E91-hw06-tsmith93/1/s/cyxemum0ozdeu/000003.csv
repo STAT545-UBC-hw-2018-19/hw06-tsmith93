@@ -1,0 +1,8 @@
+"0","words %>% 
+#using | we can indicate we want either ng or se proceding i
+str_view_all(""i(ng|se)$"", match = TRUE) %>% 
+  kable()
+"
+"2","Error in as.data.frame.default(x) : 
+  cannot coerce class ‘c(""str_view"", ""htmlwidget"")’ to a data.frame
+"

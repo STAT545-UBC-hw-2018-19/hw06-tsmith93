@@ -1,0 +1,367 @@
+---
+title: "hw06-tsmith93"
+author: "Thomas Smith"
+date: '2018-11-05'
+output: github_document
+always_allow_html: yes
+---
+-------------------------------------------------------------------------
+
+#Outline
+
+1. Load packages
+  
+2. Character data
+  
+3. Writing functions
+
+
+##1. Load packages
+
+First we will load the packages we will be using for the exercises
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(stringr))
+suppressPackageStartupMessages(library(stringi))
+suppressPackageStartupMessages(library(testthat))
+suppressPackageStartupMessages(library(knitr))
+```
+
+
+##2. Character data
+
+For this section, we will be workign through the Strings exercises found [here](https://r4ds.had.co.nz/strings.html)
+
+###String basics
+
+1. In code that doesn’t use stringr, you’ll often see paste() and paste0(). **(a)** What’s the difference between the two functions? **(b)** What stringr function are they equivalent to? **(c)** How do the functions differ in their handling of NA?
+
+**(a)** Both paste() and paste0() and are used to concatenate a series of strings, but paste() sepearates strings with " ", whereas paste0() separates strings with "". In order to remove " " (space) between strings when using paste(), you must also include the sep element as sep = ""
+
+Let's walk through this with an example.
+
+Here we use paste() to combine "c" and "at":
+
+```{r}
+paste("c", "at")
+```
+
+That is not quite what we want. Though we can use the sep argument to remove the space:
+
+```{r}
+#using "" in the sep argument removes a space when combining the two strings
+paste("c", "at", sep = "")
+```
+
+Ta da! Perfect!
+
+Lets try with paste0() now!
+
+```{r}
+paste0("c", "at")
+```
+
+Look at that! Using the past0 function, there automatically is no space between the combiend strings. Saves us some time as we do not have to use the sep argument.
+
+**(b)** The stringer function that is equivalent to paste0() is str_c(), and the stringer function that is equivalent to paste() would be str_c() with argument sep = " " included.
+
+Here will will go through the answer with examples. Let's try using str_c with the strings "c" and "at"
+
+```{r}
+str_c("c", "at")
+```
+
+No space! Just like paste0. Let's try adding a space with the sep argument:
+
+```{r}
+#using " " in the sep argument
+str_c("c", "at", sep = " ")
+```
+
+Yay! It worked!
+
+**(c)** Now we will include missing data as a string to see how this affects the functions we just went over. 
+
+First with paste:
+
+```{r}
+paste("c", "at", NA)
+```
+Look at that, it's included as NA
+
+Next with paste0:
+
+```{r}
+paste0("c", "at", NA)
+```
+
+Same as last, as expected.
+
+Now let's try including missing data  using str_c():
+
+```{r}
+str_c("c", "at", NA)
+```
+
+This resulted in the combined string to read as NA! Maybe this is because NA was last? Let's try it first:
+
+```{r}
+str_c(NA, "c", "at")
+```
+Nope! It still combined as NA!
+
+#####2. In your own words, describe the difference between the sep and collapse arguments to str_c()?
+
+Within the str_c function, you can include both the sep and collapse arguments.
+  - sep seperates terms and should be specified with character strign format
+  - collapse separates results and should be specified with character strign format
+  
+We will walk through the explained differences with an example.
+
+First we will start with a simple paste() function:
+
+```{r}
+str_c("this", "is", "file", "name")
+```
+
+Next we will separate the strings with a "_"
+
+```{r}
+str_c("this", "is", "file", "name", sep = "_")
+```
+
+Now to better explain collapse, we will make a vector and add this to our str_c():
+
+```{r}
+#first make a vector 
+x <- c("1", "2", "3")
+#then create the string you want to attach to your vector values, using sep
+str_c("this", "is", "file", "name", x, sep = "_")
+```
+
+Look what happens when we add the collapse argument:
+
+```{r}
+x <- c("1", "2", "3")
+#collapse will then combine together the newly created strings, separting by a comma
+str_c("this", "is", "file", "name", x, sep = "_", collapse = ", ")
+```
+
+3. Use str_length() and str_sub() to extract the middle character from a string. 
+
+```{r}
+str_length("elephants")
+```
+
+```{r}
+#the latter two values dictate which characters in the string you want to retrieve
+str_sub("elephants", 5, 5)
+```
+
+Lets try usign another word.
+
+```{r}
+str_length("frog")
+```
+
+Uh oh. What will you do if the string has an even number of characters
+
+```{r}
+str_sub("frog", 2, 3)
+```
+Wow, I sure feel like I have mastered a couple functions to create and investigate strings.
+
+##Matching patterns with regular expressions 
+
+As this seems to be something else foundational to workign with strings, I am goign to investigate these exercises as well. Specifically, I am going to focus on character classes and alternatives.
+
+###Using `str_view_all()`
+
+Create regular expressions to find all words that:
+
+Start with a vowel.
+
+```{r}
+#first call upon words
+words %>% 
+#the ^ symbol indiciates you are searching for words starting with specified characters. Within the square brackets what you are searching for, and match dictate whether results are what you searched or the opposite
+  str_view_all("^[aeouiy]", match = TRUE)
+```
+
+All those words sure start with a vowel. Success!
+
+That only contain consonants.
+
+```{r}
+words %>% 
+#by placing ^ infront of the letters within the square brackets, you are stating you want words not starting with specified letters.
+  str_view_all("^[^aeouiy]", match = TRUE)
+```
+
+There we go! All the words starting with consonants.
+
+Alternatively, you can use match argument to call upon these results
+
+```{r}
+words %>% 
+#no need to include ^ in front of the specified letters!
+  str_view_all("^[aeouiy]", match = FALSE)
+```
+
+End with *ed*, but not with *eed*.
+
+```{r}
+words %>% 
+#here w specify ending with ed using $, but not eed by using ^
+str_view_all("[^e]ed$", match = TRUE)
+```
+
+End with *ing* or *ise*.
+
+```{r}
+words %>% 
+#using | we can indicate we want either ng or se proceding i
+str_view_all("i(ng|se)$", match = TRUE) 
+```
+
+##2. Write a function
+
+For the second part of my homework 6, I will be writing functions. As I am hoping to create a package that I can use with my thesis work looking at the relationship of stream discharge and smolt production, I will try to create relevant functions. As most of my environmental covariates coming from the US Geological survey website, I will have to be converting several variables from imprial to metric units.
+
+###Discharge
+
+First I will make a function to convert discharge in cubic feet per second to cubic metres per second:
+
+  **ft^3^/s -> m^3^/s**
+
+The complete formula goes as such:
+
+  **(957.5065 fl. oz./1 ft^3^ ) X (1 L/33.814 fl. oz.) X (1 m^3^ /1000L)**
+
+Though a direct conversion is 1 ft^3^  X  0.02831685 m^3^/1 ft 
+
+We will use this simplified conversion in the function we create.
+
+```{r}
+#The input of 'ft2m' is temperature in Fahrenheit
+ft2m <- function(ft) {
+#F to C formula
+  m <- ft*(0.02831685)
+
+  #FtoC will return the temperature in Celsius
+  return(m)
+}
+```
+
+There! We have now saved the function `ft2m` to convert any ft^3^/s data to m^3^/s. Let's give this baby a test drive.
+
+```{r}
+#Test the function by converting 78 cubic feet per second to cubic metres per second
+ft2m(78)
+```
+
+Would you look at that! 78 ft^3^/s does indeed equate to 2.208714 m^3^/s. It looks like my *very first function* is working. But before I get too excited, I should probably use testthat to make sure!
+
+```{r}
+test_that("Simple cases work", {
+  expect_equal(ft2m(1), 0.02831685)
+  expect_lt(ft2m(78), 3)
+})
+```
+
+```{r error=TRUE}
+ft2m("three")
+```
+
+```{r}
+ft2m <- function (ft) {
+  if (!is.numeric(ft)) {
+    stop(paste("ft must be numeric, your input was character",
+               typeof(ft)))
+  }
+  m <- ft*(0.02831685)
+}
+```
+
+```{r error=TRUE}
+ft2m("three")
+```
+
+```{r}
+discharge <- c(66.27845435, 53.69990518, 80.78557149, 64.10702956, 98.43554032, 72.51415782, 71.19987428, 89.39984214, 50.10705428)
+discharge
+```
+
+```{r}
+discharge_converted <- ft2m(discharge)
+discharge_converted
+```
+
+Look at that! I converted a vector of dicharge values in feet^3^/second to metres^3^/second.
+
+Though as I will be importing my data as a dataframe, I wanted to practice adding a new collumn for the converted dicharge values.
+
+```{r}
+ef_trask = read.csv("ef_trask.csv", header = TRUE)
+ef_trask
+```
+
+
+```{r}
+#let's use the function to convert all of our discharge values 
+ef_trask$dishcharge_converted <- ft2m(ef_trask$discharge)
+ef_trask %>% 
+  kable(col.names = c("Year", "Coho spawners", "Coho smolts", "Chinook spawners", "Chinook smolts", "Cubic feet per second", "Cubic metres per second", "Sediment tonnes per day"))
+```
+ 
+Yay, look how beautifully that worked! Now for the next function...
+ 
+###Sediment
+ 
+ As my discharge measurements coming the United States Geological Survey website is giving me sediment output in units of tonnes/day, and will want to convert these values to kg/day. The conversion for this goes as such:
+ 
+**1 tonne/day = 907.185 kg/day**
+
+Therefore, writing a function for this will be quite simple.
+
+```{r}
+#The input of 'ft2m' is temperature in Fahrenheit
+t2kg <- function(t) {
+#F to C formula
+  kg <- t*(907.185)
+
+  #FtoC will return the temperature in Celsius
+  return(kg)
+}
+```
+
+There we go, the function has been written! Let's give this baby a test drive!
+
+```{r}
+t2kg(1)
+```
+
+Wahoo! It worked! At least that's what it seems at this point... Time to put it through some tests:
+
+```{r}
+test_that("Simple cases work", {
+  expect_equal(t2kg(1), 907.185)
+#this time we will use greater than. This will test to make the converted value is larger than the specified value (4000 in this case) 
+  expect_gt(t2kg(5), 4000)
+})
+```
+
+Look at that, my second function passed the tests with flying colours :) I am a proud papa!
+
+Time to convert all of the discharge values in my dataset.
+
+```{r}
+#let's use the fnction to convert all our sediment values
+ef_trask$sediment_converted <- t2kg(ef_trask$sediment)
+ef_trask %>% 
+#let's give out table fancy titles  
+  kable(col.names = c("Year", "Coho spawners", "Coho smolts", "Chinook spawners", "Chinook smolts", "Cubic feet per second", "Cubic metres per second", "Sediment tonnes per day", "Sediment kg per day"))
+```
+
+Wow look at that, all of my conversions doen so easily with the easy creation of a couple functions. I sure am looking forward to creating more functions, maybe even a whole package to deal with my dataset. 

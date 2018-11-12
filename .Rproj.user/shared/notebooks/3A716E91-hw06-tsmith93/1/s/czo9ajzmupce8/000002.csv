@@ -1,0 +1,7 @@
+"0","#using """" in the sep argument removes a space when combining the two strings
+paste(""c"", ""at"", sep = """")
+"
+"1","[1]"
+"1"," ""cat"""
+"1","
+"

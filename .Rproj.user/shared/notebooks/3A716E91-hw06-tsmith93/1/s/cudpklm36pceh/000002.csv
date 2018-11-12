@@ -1,0 +1,7 @@
+"0","ft2m <- function (ft) {"
+"0","  if (!is.numeric(ft)) {"
+"0","    stop(paste(""ft must be numeric, your input was character"","
+"0","               typeof(ft)))"
+"0","  }"
+"0","  m <- ft*(0.02831685)"
+"0","}"

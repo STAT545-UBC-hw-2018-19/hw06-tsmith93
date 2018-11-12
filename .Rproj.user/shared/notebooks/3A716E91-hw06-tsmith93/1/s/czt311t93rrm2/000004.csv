@@ -1,0 +1,4 @@
+"0","ft2m(""three"")"
+"2","Error in ft2m(""three"") : 
+  ft must be numeric, your input was character character
+"

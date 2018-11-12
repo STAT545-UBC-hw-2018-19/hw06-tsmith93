@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1541905353545.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "211D28DC",
+    "lastKnownWriteTime" : 1540316931,
+    "last_content_update" : 1540316931,
+    "path" : "~/Documents/School/UBC/MSc/MSc courses/STAT 545A:547/STAT545A-Participation/Class 101/cm101.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "chunk_output_type" : "github_document",
+        "cursorPosition" : "78,12",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
