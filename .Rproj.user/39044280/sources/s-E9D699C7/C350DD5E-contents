@@ -9,13 +9,13 @@ always_allow_html: yes
 
 #Outline
 
-1. Load packages
+-------------------------------------------------------------------------
+**1.** Load packages
   
-2. Character data
+**2.** Character data
   
-3. Writing functions
-
---------------------------------------------------------------------
+**3.** Writing functions
+-------------------------------------------------------------------------
 
 ##1. Load packages
 
