@@ -3,6 +3,7 @@ title: "hw06-tsmith93"
 author: "Thomas Smith"
 date: '2018-11-05'
 output: github_document
+always_allow_html: yes
 ---
 -------------------------------------------------------------------------
 
@@ -135,6 +136,7 @@ Now to better explain collapse, we will make a vector and add this to our str_c(
 ```{r}
 #first make a vector 
 x <- c("1", "2", "3")
+#then create the string you want to attach to your vector values, using sep
 str_c("this", "is", "file", "name", x, sep = "_")
 ```
 
@@ -142,6 +144,7 @@ Look what happens when we add the collapse argument:
 
 ```{r}
 x <- c("1", "2", "3")
+#collapse will then combine together the newly created strings, separting by a comma
 str_c("this", "is", "file", "name", x, sep = "_", collapse = ", ")
 ```
 
@@ -152,25 +155,83 @@ str_length("elephants")
 ```
 
 ```{r}
+#the latter two values dictate which characters in the string you want to retrieve
 str_sub("elephants", 5, 5)
 ```
 
-What will you do if the string has an even number of characters?
+Lets try usign another word.
 
 ```{r}
 str_length("frog")
 ```
+
+Uh oh. What will you do if the string has an even number of characters
+
 ```{r}
 str_sub("frog", 2, 3)
 ```
+Wow, I sure feel like I have mastered a couple functions to create and investigate strings.
 
 ##Matching patterns with regular expressions 
 
+As this seems to be something else foundational to workign with strings, I am goign to investigate these exercises as well. Specifically, I am going to focus on character classes and alternatives.
+
+###Using `str_view_all()`
+
+Create regular expressions to find all words that:
+
+Start with a vowel.
+
+```{r}
+#first call upon words
+words %>% 
+#the ^ symbol indiciates you are searching for words starting with specified characters. Within the square brackets what you are searching for, and match dictate whether results are what you searched or the opposite
+  str_view_all("^[aeouiy]", match = TRUE)
+```
+
+All those words sure start with a vowel. Success!
+
+That only contain consonants.
+
+```{r}
+words %>% 
+#by placing ^ infront of the letters within the square brackets, you are stating you want words not starting with specified letters.
+  str_view_all("^[^aeouiy]", match = TRUE)
+```
+
+There we go! All the words starting with consonants.
+
+Alternatively, you can use match argument to call upon these results
+
+```{r}
+words %>% 
+#no need to include ^ in front of the specified letters!
+  str_view_all("^[aeouiy]", match = FALSE)
+```
+
+End with *ed*, but not with *eed*.
+
+```{r}
+words %>% 
+#here w specify ending with ed using $, but not eed by using ^
+str_view_all("[^e]ed$", match = TRUE)
+```
+
+End with *ing* or *ise*.
+
+```{r}
+words %>% 
+#using | we can indicate we want either ng or se proceding i
+str_view_all("i(ng|se)$", match = TRUE)
+```
+
 ##2. Write a function
 
-For the second part of my homework 6, I will be writing a function. As I am hoping to create a package that I can use with my thesis work looking at the relationship of stream discharge and smolt production, I will try to create a relevant function. An idea I have is to write function.
+For the second part of my homework 6, I will be writing functions. As I am hoping to create a package that I can use with my thesis work looking at the relationship of stream discharge and smolt production, I will try to create relevant functions. As most of my environmental covariates coming from the US Geological survey website, I will have to be converting several variables from imprial to metric units.
 
-As most of the data I am using is coming the United States of America, the dishcarge unit is cubic feet per second, as opposed to cubic metres per second. Therefore, I am going to try and write a function to do the conversion for me. 
+###Discharge
+
+First I will make a function to convert discharge in cubic feet per second to cubic metres per second:
 
   **ft^3^/s -> m^3^/s**
 
@@ -248,8 +309,59 @@ ef_trask
 
 
 ```{r}
+#let's use the function to convert all of our discharge values 
 ef_trask$dishcharge_converted <- ft2m(ef_trask$discharge)
 ef_trask %>% 
-  kable(col.names = c("Year", "Coho spawners", "Coho smolts", "Chinook spawners", "Chinook smolts", "Cubic feet per second", "Cubic metres per second"))
+  kable(col.names = c("Year", "Coho spawners", "Coho smolts", "Chinook spawners", "Chinook smolts", "Cubic feet per second", "Cubic metres per second", "Sediment tonnes per day"))
+```
+ 
+Yay, look how beautifully that worked! Now for the next function...
+ 
+###Sediment
+ 
+ As my discharge measurements coming the United States Geological Survey website is giving me sediment output in units of tonnes/day, and will want to convert these values to kg/day. The conversion for this goes as such:
+ 
+**1 tonne/day = 907.185 kg/day**
+
+Therefore, writing a function for this will be quite simple.
+
+```{r}
+#The input of 'ft2m' is temperature in Fahrenheit
+t2kg <- function(t) {
+#F to C formula
+  kg <- t*(907.185)
+
+  #FtoC will return the temperature in Celsius
+  return(kg)
+}
 ```
 
+There we go, the function has been written! Let's give this baby a test drive!
+
+```{r}
+t2kg(1)
+```
+
+Wahoo! It worked! At least that's what it seems at this point... Time to put it through some tests:
+
+```{r}
+test_that("Simple cases work", {
+  expect_equal(t2kg(1), 907.185)
+#this time we will use greater than. This will test to make the converted value is larger than the specified value (4000 in this case) 
+  expect_gt(t2kg(5), 4000)
+})
+```
+
+Look at that, my second function passed the tests with flying colours :) I am a proud papa!
+
+Time to convert all of the discharge values in my dataset.
+
+```{r}
+#let's use the fnction to convert all our sediment values
+ef_trask$sediment_converted <- t2kg(ef_trask$sediment)
+ef_trask %>% 
+#let's give out table fancy titles  
+  kable(col.names = c("Year", "Coho spawners", "Coho smolts", "Chinook spawners", "Chinook smolts", "Cubic feet per second", "Cubic metres per second", "Sediment tonnes per day", "Sediment kg per day"))
+```
+
+Wow look at that, all of my conversions doen so easily with the easy creation of a couple functions. I sure am looking forward to creating more functions, maybe even a whole package to deal with my dataset. 
