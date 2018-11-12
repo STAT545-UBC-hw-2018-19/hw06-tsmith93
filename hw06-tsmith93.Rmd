@@ -15,6 +15,7 @@ always_allow_html: yes
   
 3. Writing functions
 
+--------------------------------------------------------------------
 
 ##1. Load packages
 
