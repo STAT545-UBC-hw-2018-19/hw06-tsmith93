@@ -19,7 +19,7 @@ Let's get to it!
 
 -------------------------------------------------
 
-##1. Load packages
+###1. Load packages
 
 First we will load the packages we will be using for the exercises
 
@@ -32,7 +32,7 @@ suppressPackageStartupMessages(library(knitr))
 ```
 
 
-##2. Character data
+###2. Character data
 
 For this section, we will be workign through the Strings exercises found [here](https://r4ds.had.co.nz/strings.html)
 
@@ -228,7 +228,7 @@ words %>%
 str_view_all("i(ng|se)$", match = TRUE) 
 ```
 
-##2. Write a function
+###2. Write a function
 
 For the second part of my homework 6, I will be writing functions. As I am hoping to create a package that I can use with my thesis work looking at the relationship of stream discharge and smolt production, I will try to create relevant functions. As most of my environmental covariates coming from the US Geological survey website, I will have to be converting several variables from imprial to metric units.
 
