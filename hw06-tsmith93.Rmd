@@ -15,7 +15,6 @@ always_allow_html: yes
   
 3. Writing functions
 
--------------------------------------------------------------------------
 
 ##1. Load packages
 
@@ -28,6 +27,7 @@ suppressPackageStartupMessages(library(stringi))
 suppressPackageStartupMessages(library(testthat))
 suppressPackageStartupMessages(library(knitr))
 ```
+
 
 ##2. Character data
 
@@ -222,7 +222,7 @@ End with *ing* or *ise*.
 ```{r}
 words %>% 
 #using | we can indicate we want either ng or se proceding i
-str_view_all("i(ng|se)$", match = TRUE)
+str_view_all("i(ng|se)$", match = TRUE) 
 ```
 
 ##2. Write a function
