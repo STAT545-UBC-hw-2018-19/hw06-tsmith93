@@ -17,6 +17,8 @@ always_allow_html: yes
 
 Let's get to it!
 
+-------------------------------------------------
+
 ##1. Load packages
 
 First we will load the packages we will be using for the exercises
